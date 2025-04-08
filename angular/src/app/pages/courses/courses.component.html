@@ -1,0 +1,14 @@
+<h2>Courses en cours</h2>
+<table>
+  <tr>
+    <th>Départ</th>
+    <th>Arrivée</th>
+    <th>Priorité</th>
+  </tr>
+  <tr *ngFor="let course of courses">
+    <td>{{ course.depart }}</td>
+    <td>{{ course.arrivee }}</td>
+    <td>{{ course.priorite }}</td>
+  </tr>
+</table>
+

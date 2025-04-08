@@ -1,3 +1,17 @@
 
-<router-outlet></router-outlet>
+
+
+<!-- Affichage du Header (Logo, Nom, Bouton déconnexion/profil) -->
+<app-header></app-header>
+
+<!-- Conteneur principal pour Sidebar et le contenu dynamique -->
+<div class="main-container">
+  <!-- Affichage de la Sidebar (Navigation) -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Contenu dynamique qui change selon la route -->
+  <div class="content-container">
+    <router-outlet></router-outlet>
+  </div>
+</div>
 

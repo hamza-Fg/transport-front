@@ -1,6 +1,6 @@
 export interface Camion {
     id?: number;  // Optional for creation
-    nomCamion: string;
+    nomCamion?: string;
     courses?: Course[]; // Include if you need nested data
   }
   

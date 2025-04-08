@@ -1,0 +1,29 @@
+<div class="dashboard">
+    <div class="statistics">
+      <h3>Statistiques clés</h3>
+      <div class="stat">
+        <p><strong>Livraisons complétées:</strong> {{ statistics.deliveriesCompleted }}</p>
+        <p><strong>Temps moyen de livraison:</strong> {{ statistics.averageDeliveryTime }} minutes</p>
+        <p><strong>Camions disponibles:</strong> {{ statistics.trucksAvailable }}</p>
+      </div>
+    </div>
+  
+    <div class="map">
+      <h3>Carte / Graphique interactif</h3>
+      <!-- Ici tu peux intégrer Google Maps ou une autre bibliothèque de carte interactive -->
+      <div class="map-container">
+        <p>Carte interactive ici (Latitude: {{ mapData.lat }}, Longitude: {{ mapData.lng }})</p>
+        <!-- Exemple avec une simple carte statique -->
+      </div>
+    </div>
+  
+    <div class="optimizations">
+      <h3>Dernières optimisations</h3>
+      <ul>
+        <li *ngFor="let optimization of optimizations">
+          <strong>{{ optimization.date }}:</strong> {{ optimization.description }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  
