@@ -1,3 +1,41 @@
-<button class="btn btn-primary" (click)="envoyerRequeteTest()">
+<!-- <button class="btn btn-primary" (click)="envoyerRequeteTest()">
     Optimiser un trajet de test
-  </button>
+  </button> -->
+  <div *ngIf="camions.length === 0">
+    <p>Aucun camion disponible pour le moment.</p>
+  </div>
+
+    <button>Ajouter Camion</button>
+  
+  <table *ngIf="camions.length > 0" class="camions-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let camion of camions">
+        <td>{{ camion.id }}</td>
+        <td>{{ camion.nomCamion }}</td>
+        <td>
+          <button (click)="setCamionTest(camion)">Optimiser</button>
+          <button >Modifier </button>
+          <button >Supprimer </button>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <div *ngIf="coursesOptimisees.length > 0">
+    <h3>Résultat d'optimisation</h3>
+    <ul>
+      <li *ngFor="let course of coursesOptimisees">
+        De {{ course.depart }} à {{ course.arrivee }}
+      </li>
+    </ul>
+  </div>
+  

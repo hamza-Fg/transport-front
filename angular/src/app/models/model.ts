@@ -1,4 +1,8 @@
 export interface Camion {
+capacite: any;
+modele: any;
+marque: any;
+localisation: any;
     id?: number;  // Optional for creation
     nomCamion?: string;
     courses?: Course[]; // Include if you need nested data
