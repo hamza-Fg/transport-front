@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Camion, Course } from '../models/model';
+import { Camion } from '../models/camion.model';
+import { Course } from '../models/course.model';
 
 @Injectable({
   providedIn: 'root'
@@ -48,10 +49,7 @@ export class OptimisationService {
     }
   ],
   
-  capacite: undefined,
-  modele: undefined,
-  marque: undefined,
-  localisation: undefined
+
 };
 
   }

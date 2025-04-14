@@ -1,22 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { Camion, Course } from '../../models/model';
 import { CamionService } from '../../services/camion.service';
 import { OptimisationService } from '../../services/optimisation.service';
 import { CommonModule } from '@angular/common';
+import { Camion } from '../../models/camion.model';
+import { Course } from '../../models/course.model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-camions-page',
   standalone: true,
-  
-  imports: [CommonModule],
-  templateUrl: './camions-page.component.html',
-  styleUrls: ['./camions-page.component.scss']
+  imports: [CommonModule, FormsModule],
+  templateUrl: './camions-page.component.html'
 })
 export class CamionsPageComponent implements OnInit {
 
   camions: Camion[] = [];
   camionTest: Camion = {} as Camion;  // Initialisation typée
   coursesOptimisees: Course[] = [];
+  nouveauCamion: Camion = {} as Camion;
+  showAddForm = false;
 
   isLoading = false;
   isOptimising = false;
@@ -47,13 +49,13 @@ export class CamionsPageComponent implements OnInit {
     });
   }
 
-  // Sélection d’un camion à tester
+  // Sélection d'un camion à tester
   setCamionTest(camion: Camion): void {
     this.camionTest = camion;
     this.envoyerRequeteTest();
   }
 
-  // Appel de l’optimisation pour le camion sélectionné
+  // Appel de l'optimisation pour le camion sélectionné
   envoyerRequeteTest(): void {
     this.isOptimising = true;
     this.errorMessage = '';
@@ -68,6 +70,35 @@ export class CamionsPageComponent implements OnInit {
         console.error('Erreur lors de l\'optimisation :', err);
         this.errorMessage = 'Échec de l\'optimisation.';
         this.isOptimising = false;
+      }
+    });
+  }
+
+  toggleAddForm(): void {
+    this.showAddForm = !this.showAddForm;
+    if (this.showAddForm) {
+      this.nouveauCamion = {} as Camion;
+    }
+  }
+
+  ajouterCamion(): void {
+    if (!this.nouveauCamion.nomCamion) {
+      this.errorMessage = 'Le nom du camion est requis';
+      return;
+    }
+
+    this.isLoading = true;
+    this.camionService.createCamion(this.nouveauCamion).subscribe({
+      next: (camion) => {
+        this.camions.push(camion);
+        this.showAddForm = false;
+        this.nouveauCamion = {} as Camion;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Erreur lors de la création du camion :', err);
+        this.errorMessage = 'Impossible de créer le camion.';
+        this.isLoading = false;
       }
     });
   }
