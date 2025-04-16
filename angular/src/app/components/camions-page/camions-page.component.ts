@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import { Camion } from '../../models/camion.model';
 import { Course } from '../../models/course.model';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-camions-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './camions-page.component.html'
 })
 export class CamionsPageComponent implements OnInit {
