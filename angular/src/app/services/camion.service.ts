@@ -2,13 +2,14 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Camion } from '../models/camion.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CamionService {
 
-  private apiUrl = `http://localhost:8080/camions`;
+  private apiUrl = `${environment.apiUrl}/camions`;
 
   constructor(private http: HttpClient) { }
 
@@ -34,6 +35,16 @@ export class CamionService {
       .pipe(
         catchError(this.handleError)
       );
+  }
+
+  // Update a Camion
+  updateCamion(id: number, camion: Camion): Observable<Camion> {
+    return this.http.put<Camion>(`${this.apiUrl}/${id}`, camion);
+  }
+
+  // Delete a Camion
+  deleteCamion(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   // Error handling

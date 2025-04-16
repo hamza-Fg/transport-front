@@ -19,6 +19,8 @@ export class CamionsPageComponent implements OnInit {
   coursesOptimisees: Course[] = [];
   nouveauCamion: Camion = {} as Camion;
   showAddForm = false;
+  showEditForm = false;
+  camionToEdit: Camion = {} as Camion;
 
   isLoading = false;
   isOptimising = false;
@@ -76,6 +78,7 @@ export class CamionsPageComponent implements OnInit {
 
   toggleAddForm(): void {
     this.showAddForm = !this.showAddForm;
+    this.showEditForm = false;
     if (this.showAddForm) {
       this.nouveauCamion = {} as Camion;
     }
@@ -98,6 +101,54 @@ export class CamionsPageComponent implements OnInit {
       error: (err) => {
         console.error('Erreur lors de la création du camion :', err);
         this.errorMessage = 'Impossible de créer le camion.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  supprimerCamion(camion: Camion): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce camion ?')) {
+      this.isLoading = true;
+      this.camionService.deleteCamion(camion.id!).subscribe({
+        next: () => {
+          this.camions = this.camions.filter(c => c.id !== camion.id);
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Erreur lors de la suppression du camion :', err);
+          this.errorMessage = 'Impossible de supprimer le camion.';
+          this.isLoading = false;
+        }
+      });
+    }
+  }
+
+  editCamion(camion: Camion): void {
+    this.camionToEdit = { ...camion };
+    this.showEditForm = true;
+    this.showAddForm = false;
+  }
+
+  updateCamion(): void {
+    if (!this.camionToEdit.nomCamion) {
+      this.errorMessage = 'Le nom du camion est requis';
+      return;
+    }
+
+    this.isLoading = true;
+    this.camionService.updateCamion(this.camionToEdit.id!, this.camionToEdit).subscribe({
+      next: (updatedCamion) => {
+        const index = this.camions.findIndex(c => c.id === updatedCamion.id);
+        if (index !== -1) {
+          this.camions[index] = updatedCamion;
+        }
+        this.showEditForm = false;
+        this.camionToEdit = {} as Camion;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Erreur lors de la mise à jour du camion :', err);
+        this.errorMessage = 'Impossible de mettre à jour le camion.';
         this.isLoading = false;
       }
     });
