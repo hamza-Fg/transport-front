@@ -1,6 +1,10 @@
-export interface Localisation {
-    id?: number;
-    x?: number;  // Coordonnée X (latitude/longitude)
-    y?: number;  // Coordonnée Y (latitude/longitude)
+export class Localisation {
+  id?: number;
+  x: number;
+  y: number;
+
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
   }
-  
+}

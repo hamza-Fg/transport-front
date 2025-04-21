@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Localisation } from '../models/localisation.model';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { Localisation } from '../models/localisation.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocalisationService {
-  private apiUrl = `http://localhost:8080/courses`;
-
+  private apiUrl = 'http://localhost:8080/localisations'; // adapte au besoin
 
   constructor(private http: HttpClient) {}
 
@@ -21,12 +19,12 @@ export class LocalisationService {
     return this.http.get<Localisation>(`${this.apiUrl}/${id}`);
   }
 
-  create(loc: Localisation): Observable<Localisation> {
-    return this.http.post<Localisation>(this.apiUrl, loc);
+  create(localisation: Localisation): Observable<Localisation> {
+    return this.http.post<Localisation>(this.apiUrl, localisation);
   }
 
-  update(id: number, loc: Localisation): Observable<Localisation> {
-    return this.http.put<Localisation>(`${this.apiUrl}/${id}`, loc);
+  update(id: number, localisation: Localisation): Observable<Localisation> {
+    return this.http.put<Localisation>(`${this.apiUrl}/${id}`, localisation);
   }
 
   delete(id: number): Observable<void> {

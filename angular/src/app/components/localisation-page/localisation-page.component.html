@@ -1,0 +1,26 @@
+<h2>Liste des Localisations</h2>
+
+<ul>
+  <li *ngFor="let loc of localisations">
+    {{ loc.id }} - ({{ loc.x }}, {{ loc.y }})
+    <button (click)="edit(loc)">Modifier</button>
+    <button (click)="deleteLocalisation(loc.id!)">Supprimer</button>
+  </li>
+</ul>
+
+<h3>Ajouter une localisation</h3>
+<form (ngSubmit)="addLocalisation()">
+  X: <input [(ngModel)]="newLocalisation.x" name="x" required>
+  Y: <input [(ngModel)]="newLocalisation.y" name="y" required>
+  <button type="submit">Ajouter</button>
+</form>
+
+<div *ngIf="isEditing && selectedLocalisation">
+  <h3>Modifier la localisation</h3>
+  <form (ngSubmit)="updateLocalisation()">
+    X: <input [(ngModel)]="selectedLocalisation.x" name="xEdit" required>
+    Y: <input [(ngModel)]="selectedLocalisation.y" name="yEdit" required>
+    <button type="submit">Mettre à jour</button>
+  </form>
+</div>
+
