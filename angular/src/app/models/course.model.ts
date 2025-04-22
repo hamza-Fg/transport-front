@@ -6,3 +6,5 @@ export interface Course {
   depart: Localisation;
   arrivee: Localisation;
 }
+export { Localisation };
+

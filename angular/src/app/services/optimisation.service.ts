@@ -10,6 +10,7 @@ import { Course } from '../models/course.model';
 
 export class OptimisationService {
     private apiUrl = 'http://localhost:8080/api/trajets';
+  optimizeRoute: any;
 
   constructor(private http: HttpClient) { }
 

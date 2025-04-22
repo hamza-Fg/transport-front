@@ -1,0 +1,31 @@
+<div class="optimisation-container">
+    <h2>Optimisation du trajet</h2>
+  
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+  
+    <div *ngIf="isLoading" class="loading-message">
+      <p>Chargement...</p>
+    </div>
+  
+    <div *ngIf="response" class="response">
+      <h3>Résultat de l'optimisation pour le camion {{ response.nomCamion }}</h3>
+      <p><strong>ID du camion:</strong> {{ response.camionId }}</p>
+      <p><strong>Distance totale:</strong> {{ response.distanceTotale }} km</p>
+  
+      <h4>Ordre des courses :</h4>
+      <ul>
+        <li *ngFor="let courseId of response.ordreCoursesIds">
+          Course ID: {{ courseId }}
+        </li>
+      </ul>
+    </div>
+  
+    <div class="optimisation-form">
+      <label for="camionId">ID du camion :</label>
+      <input type="number" id="camionId" [(ngModel)]="camionId" placeholder="Entrez l'ID du camion" />
+      <button (click)="optimize(camionId)" [disabled]="isLoading">Optimiser</button>
+    </div>
+  </div>
+  
