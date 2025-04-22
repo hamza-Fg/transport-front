@@ -1,163 +1,82 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
-import { CourseService } from '../../services/course.service';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Course } from '../../models/course.model';
-import { FormsModule } from '@angular/forms';
-import { LocalisationService } from '../../services/localisation.service';
+import { CourseService } from '../../services/course.service';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-courses-page',
+  selector: 'app-course-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './courses-page.component.html',
-  styleUrls: ['./courses-page.component.scss']
+  styleUrls: ['./courses-page.component.scss'],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+    // Ajoutez ici d'autres modules nécessaires, comme FormsModule si vous utilisez ngModel
+  ] // Ajoutez ici les modules nécessaires
 })
-export class CoursesPageComponent implements OnInit {
+export class CoursePageComponent implements OnInit {
   courses: Course[] = [];
-  isLoading = false;
-  errorMessage = '';
-  showEditForm = false;
-  showDeleteDialog = false;
-  showAddForm = false;
+  courseForm: FormGroup;
+  selectedCourseId: number | null = null;
 
-  courseToEdit: Course = {
-    id: 0,
-    depart: { x: 0, y: 0 },
-    arrivee: { x: 0, y: 0 }
-  };
-
-  newCourse: Course = {
-    id: 0,
-    depart: { x: 0, y: 0 },
-    arrivee: { x: 0, y: 0 }
-  };
-
-  courseToDelete: Course | null = null;
-  camionId: number = 0;
-
-  constructor(
-    private route: ActivatedRoute,
-    private courseService: CourseService,
-    private localisationService: LocalisationService
-  ) {}
+  constructor(private courseService: CourseService, private fb: FormBuilder) {
+    this.courseForm = this.fb.group({
+      departX: [''],
+      departY: [''],
+      arriveeX: [''],
+      arriveeY: [''],
+      camionId: ['']
+    });
+  }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.camionId = params['idCamion'];
-      if (this.camionId) {
-        this.loadCourses(this.camionId);
-      }
+    this.loadCourses();
+  }
+
+  loadCourses(): void {
+    this.courseService.getAll().subscribe((data: Course[]) => {
+      this.courses = data;
     });
   }
 
-  loadCourses(camionId: number): void {
-    this.isLoading = true;
-    this.courseService.getAllCoursesByCamionId(camionId).subscribe({
-      next: (data) => {
-        this.courses = data.map(course => ({
-          ...course,
-          depart: course.depart || { x: 0, y: 0 },
-          arrivee: course.arrivee || { x: 0, y: 0 }
-        }));
-        this.isLoading = false;
-      },
-      error: (err: Error) => {
-        console.error('Erreur :', err);
-        this.errorMessage = 'Impossible de charger les courses.';
-        this.isLoading = false;
-      }
-    });
-  }
-
-  showAddCourseForm(): void {
-    this.showAddForm = true;
-    this.newCourse = {
-      id: 0,
-      depart: { x: 0, y: 0 },
-      arrivee: { x: 0, y: 0 }
+  onSubmit(): void {
+    const formValue = this.courseForm.value;
+    const course: Course = {
+      depart: { x: formValue.departX, y: formValue.departY },
+      arrivee: { x: formValue.arriveeX, y: formValue.arriveeY },
+      camionId: formValue.camionId
     };
-  }
 
-  addCourse(): void {
-    if (!this.camionId) {
-      this.errorMessage = "ID du camion manquant.";
-      return;
+    if (this.selectedCourseId) {
+      this.courseService.update(this.selectedCourseId, course).subscribe(() => {
+        this.loadCourses();
+        this.courseForm.reset();
+        this.selectedCourseId = null;
+      });
+    } else {
+      this.courseService.create(course).subscribe(() => {
+        this.loadCourses();
+        this.courseForm.reset();
+      });
     }
-
-    this.isLoading = true;
-    console.log(this.newCourse)
-    this.courseService.createCourse(this.newCourse).subscribe({
-      next: (createdCourse: Course) => {
-        this.courses.push(createdCourse);
-        this.showAddForm = false;
-        this.isLoading = false;
-      },
-      error: (err: any) => {
-        console.error('Erreur lors de l’ajout :', err);
-        this.errorMessage = 'Impossible d’ajouter la course.';
-        this.isLoading = false;
-      }
-    });
   }
 
   editCourse(course: Course): void {
-    this.courseToEdit = {
-      ...course,
-      depart: course.depart || { x: 0, y: 0 },
-      arrivee: course.arrivee || { x: 0, y: 0 }
-    };
-    this.showEditForm = true;
-  }
-
-  updateCourse(): void {
-    if (!this.courseToEdit.id) {
-      this.errorMessage = 'ID manquant';
-      return;
-    }
-
-    this.isLoading = true;
-    this.courseService.updateCourse(this.courseToEdit.id, this.courseToEdit).subscribe({
-      next: (updatedCourse: Course) => {
-        const index = this.courses.findIndex(c => c.id === updatedCourse.id);
-        if (index !== -1) {
-          this.courses[index] = updatedCourse;
-        }
-        this.showEditForm = false;
-        this.isLoading = false;
-      },
-      error: (err: Error) => {
-        console.error('Erreur MAJ :', err);
-        this.errorMessage = 'Erreur MAJ course';
-        this.isLoading = false;
-      }
+    this.selectedCourseId = course.id || null;
+    this.courseForm.patchValue({
+      departX: course.depart.x,
+      departY: course.depart.y,
+      arriveeX: course.arrivee.x,
+      arriveeY: course.arrivee.y,
+      camionId: course.camionId
     });
   }
 
-  showDeleteConfirmation(course: Course): void {
-    this.courseToDelete = course;
-    this.showDeleteDialog = true;
-  }
-
-  confirmDelete(): void {
-    if (!this.courseToDelete?.id) {
-      this.errorMessage = 'ID manquant';
-      return;
-    }
-
-    this.isLoading = true;
-    this.courseService.deleteCourse(this.courseToDelete.id).subscribe({
-      next: () => {
-        this.courses = this.courses.filter(c => c.id !== this.courseToDelete?.id);
-        this.showDeleteDialog = false;
-        this.courseToDelete = null;
-        this.isLoading = false;
-      },
-      error: (err: Error) => {
-        console.error('Erreur suppression :', err);
-        this.errorMessage = 'Erreur suppression course';
-        this.isLoading = false;
-      }
+  deleteCourse(id: number): void {
+    this.courseService.delete(id).subscribe(() => {
+      this.loadCourses();
     });
   }
 }

@@ -1,228 +1,33 @@
-<div class="p-4">
-  <div class="flex justify-between items-center mb-4">
-    <h1 class="text-2xl font-bold">Courses du camion</h1>
-    <button 
-      (click)="showAddCourseForm()"
-      class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-    >
-      Ajouter une course
-    </button>
-  </div>
-  
-  <div *ngIf="isLoading" class="text-center py-4">
-    Chargement des courses...
-  </div>
+<h2>Gestion des Courses</h2>
 
-  <div *ngIf="errorMessage" class="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
-    {{ errorMessage }}
+<form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Départ X:</label>
+    <input formControlName="departX" type="number" />
   </div>
-
-  <table *ngIf="courses.length > 0" class="w-full mt-4 border-collapse">
-    <thead>
-      <tr class="bg-gray-100">
-        <th class="p-3 border border-gray-300">ID</th>
-        <th class="p-3 border border-gray-300">Point de départ</th>
-        <th class="p-3 border border-gray-300">Point d'arrivée</th>
-        <th class="p-3 border border-gray-300">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let course of courses" class="hover:bg-gray-50">
-        <td class="p-3 border border-gray-300 text-center">{{ course.id }}</td>
-        <td class="p-3 border border-gray-300 text-center">
-          {{ course.depart.x }}, {{ course.depart.y }}
-        </td>
-        <td class="p-3 border border-gray-300 text-center">
-          {{ course.arrivee.x }}, {{ course.arrivee.y }}
-        </td>
-        <td class="p-3 border border-gray-300 text-center space-x-2">
-          <button 
-            (click)="editCourse(course)"
-            class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
-          >
-            Modifier
-          </button>
-          <button 
-            (click)="showDeleteConfirmation(course)"
-            class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-          >
-            Supprimer
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="courses.length === 0 && !isLoading" class="p-4 bg-gray-100 rounded-lg">
-    <p class="text-gray-600">Aucune course disponible pour ce camion.</p>
+  <div>
+    <label>Départ Y:</label>
+    <input formControlName="departY" type="number" />
   </div>
-
-  <!-- Formulaire d'ajout -->
-  <div *ngIf="showAddForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-      <h2 class="text-xl font-bold mb-4">Ajouter une course</h2>
-      <form (ngSubmit)="addCourse()" class="space-y-4">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-gray-700 font-bold mb-2">Point de départ (X, Y)</label>
-            <div class="flex space-x-2">
-              <input 
-                type="number" 
-                [(ngModel)]="newCourse.depart.x" 
-                name="newDepartX"
-                class="w-full px-3 py-2 border border-gray-300 rounded"
-                placeholder="X"
-                required
-              >
-              <input 
-                type="number" 
-                [(ngModel)]="newCourse.depart.y" 
-                name="newDepartY"
-                class="w-full px-3 py-2 border border-gray-300 rounded"
-                placeholder="Y"
-                required
-              >
-            </div>
-          </div>
-          <div>
-            <label class="block text-gray-700 font-bold mb-2">Point d'arrivée (X, Y)</label>
-            <div class="flex space-x-2">
-              <input 
-                type="number" 
-                [(ngModel)]="newCourse.arrivee.x" 
-                name="newArriveeX"
-                class="w-full px-3 py-2 border border-gray-300 rounded"
-                placeholder="X"
-                required
-              >
-              <input 
-                type="number" 
-                [(ngModel)]="newCourse.arrivee.y" 
-                name="newArriveeY"
-                class="w-full px-3 py-2 border border-gray-300 rounded"
-                placeholder="Y"
-                required
-              >
-            </div>
-          </div>
-        </div>
-        <div class="flex space-x-2">
-          <button 
-            type="submit" 
-            [disabled]="isLoading"
-            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors disabled:bg-gray-400"
-          >
-            {{ isLoading ? 'Ajout en cours...' : 'Ajouter' }}
-          </button>
-          <button 
-            type="button"
-            (click)="showAddForm = false"
-            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-          >
-            Annuler
-          </button>
-        </div>
-      </form>
-    </div>
+  <div>
+    <label>Arrivée X:</label>
+    <input formControlName="arriveeX" type="number" />
   </div>
-
-  <!-- Boîte de dialogue de confirmation de suppression -->
-  <div *ngIf="showDeleteDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-      <h3 class="text-xl font-bold mb-4">Confirmer la suppression</h3>
-      <div class="mb-4">
-        <p class="text-gray-700 mb-2">Êtes-vous sûr de vouloir supprimer cette course ?</p>
-        <div class="bg-gray-100 p-4 rounded">
-          <p class="font-semibold">Détails de la course :</p>
-          <p>ID : {{ courseToDelete?.id }}</p>
-          <p>Point de départ : ({{ courseToDelete?.depart?.x ?? 0 }}, {{ courseToDelete?.depart?.y ?? 0 }})</p>
-          <p>Point d'arrivée : ({{ courseToDelete?.arrivee?.x ?? 0 }}, {{ courseToDelete?.arrivee?.y ?? 0 }})</p>
-        </div>
-        <p class="text-red-600 mt-2">Cette action est irréversible.</p>
-      </div>
-      <div class="flex justify-end space-x-2">
-        <button 
-          (click)="showDeleteDialog = false"
-          class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-        >
-          Annuler
-        </button>
-        <button 
-          (click)="confirmDelete()"
-          class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-        >
-          Supprimer
-        </button>
-      </div>
-    </div>
+  <div>
+    <label>Arrivée Y:</label>
+    <input formControlName="arriveeY" type="number" />
   </div>
-
-  <!-- Formulaire de modification -->
-  <div *ngIf="showEditForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-      <h2 class="text-xl font-bold mb-4">Modifier la course</h2>
-      <form (ngSubmit)="updateCourse()" class="space-y-4">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-gray-700 font-bold mb-2">Point de départ (X, Y)</label>
-            <div class="flex space-x-2">
-              <input 
-                type="number" 
-                [(ngModel)]="courseToEdit.depart.x" 
-                name="editDepartX"
-                class="w-full px-3 py-2 border border-gray-300 rounded"
-                placeholder="X"
-                required
-              >
-              <input 
-                type="number" 
-                [(ngModel)]="courseToEdit.depart.y" 
-                name="editDepartY"
-                class="w-full px-3 py-2 border border-gray-300 rounded"
-                placeholder="Y"
-                required
-              >
-            </div>
-          </div>
-          <div>
-            <label class="block text-gray-700 font-bold mb-2">Point d'arrivée (X, Y)</label>
-            <div class="flex space-x-2">
-              <input 
-                type="number" 
-                [(ngModel)]="courseToEdit.arrivee.x" 
-                name="editArriveeX"
-                class="w-full px-3 py-2 border border-gray-300 rounded"
-                placeholder="X"
-                required
-              >
-              <input 
-                type="number" 
-                [(ngModel)]="courseToEdit.arrivee.y" 
-                name="editArriveeY"
-                class="w-full px-3 py-2 border border-gray-300 rounded"
-                placeholder="Y"
-                required
-              >
-            </div>
-          </div>
-        </div>
-        <div class="flex space-x-2">
-          <button 
-            type="submit" 
-            [disabled]="isLoading"
-            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors disabled:bg-gray-400"
-          >
-            {{ isLoading ? 'Mise à jour en cours...' : 'Mettre à jour' }}
-          </button>
-          <button 
-            type="button"
-            (click)="showEditForm = false"
-            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-          >
-            Annuler
-          </button>
-        </div>
-      </form>
-    </div>
+  <div>
+    <label>Camion ID:</label>
+    <input formControlName="camionId" type="number" />
   </div>
-</div> 
+  <button type="submit">{{ selectedCourseId ? 'Mettre à jour' : 'Créer' }} la course</button>
+</form>
+
+<ul>
+  <li *ngFor="let course of courses">
+    Course ID: {{ course.id }} - Camion ID: {{ course.camionId }}
+    <button (click)="editCourse(course)">Modifier</button>
+    <button (click)="deleteCourse(course.id!)">Supprimer</button>
+  </li>
+</ul>
