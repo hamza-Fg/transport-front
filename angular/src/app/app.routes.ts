@@ -10,6 +10,6 @@ export const routes: Routes = [
     { path: 'camions', component: CamionsPageComponent }, // Route pour /map
     { path: 'home', component: HomeComponent }, // Route pour /map
     { path: 'courses', component: CoursesPageComponent },
-    { path: 'localisation',component:LocalisationsPageComponent}
+    { path: 'localisations',component:LocalisationsPageComponent}
 ];
 

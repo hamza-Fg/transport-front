@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-optimisation',
-  standalone:true,
+  standalone: true,
   templateUrl: './optimisation.component.html',
-  styleUrls: ['./optimisation.component.scss']
+  styleUrls: ['./optimisation.component.scss'],
+  imports: [DatePipe]  // Assurez-vous que DatePipe est importé ici
 })
 export class OptimisationComponent {
   derniereOptimisation = {
@@ -12,4 +14,10 @@ export class OptimisationComponent {
     trajet: 'A → B → C',
     gainTemps: '25%'
   };
+
+  formattedDate: string;
+
+  constructor(private datePipe: DatePipe) {
+    this.formattedDate = this.datePipe.transform(this.derniereOptimisation.date, 'short') || '';  // Format de la date
+  }
 }
