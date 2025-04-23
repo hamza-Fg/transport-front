@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
 import { CommonModule } from '@angular/common';
-
+import { FormsModule } from '@angular/forms'; // Pour ngModel
 
 @Component({
   selector: 'app-course-page',
@@ -12,14 +12,15 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./courses-page.component.scss'],
   imports: [
     CommonModule,
-    ReactiveFormsModule
-    // Ajoutez ici d'autres modules nécessaires, comme FormsModule si vous utilisez ngModel
-  ] // Ajoutez ici les modules nécessaires
+    ReactiveFormsModule,
+    FormsModule
+  ]
 })
 export class CoursePageComponent implements OnInit {
   courses: Course[] = [];
   courseForm: FormGroup;
   selectedCourseId: number | null = null;
+  camionIdFilter: number | null = null; // Pour le filtre par ID de camion
 
   constructor(private courseService: CourseService, private fb: FormBuilder) {
     this.courseForm = this.fb.group({
@@ -39,6 +40,14 @@ export class CoursePageComponent implements OnInit {
     this.courseService.getAll().subscribe((data: Course[]) => {
       this.courses = data;
     });
+  }
+
+  loadCoursesByCamion(): void {
+    if (this.camionIdFilter !== null) {
+      this.courseService.getByCamionId(this.camionIdFilter).subscribe((data: Course[]) => {
+        this.courses = data;
+      });
+    }
   }
 
   onSubmit(): void {

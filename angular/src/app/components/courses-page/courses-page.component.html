@@ -1,34 +1,55 @@
-<h2>Gestion des Courses</h2>
+<div class="course-container">
+  <h2>Gestion des Courses</h2>
 
+  <!-- Filtrer par Camion ID -->
+  <div class="filter-section">
+    <label for="camionFilter">Filtrer par ID de Camion :</label>
+    <input type="number" id="camionFilter" [(ngModel)]="camionIdFilter" placeholder="Entrez l'ID du camion" />
+    <button (click)="loadCoursesByCamion()">Rechercher</button>
+    <button (click)="loadCourses()">Réinitialiser</button>
+  </div>
 
-<form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
-  <div>
-    <label>Départ X:</label>
-    <input formControlName="departX" type="number" />
-  </div>
-  <div>
-    <label>Départ Y:</label>
-    <input formControlName="departY" type="number" />
-  </div>
-  <div>
-    <label>Arrivée X:</label>
-    <input formControlName="arriveeX" type="number" />
-  </div>
-  <div>
-    <label>Arrivée Y:</label>
-    <input formControlName="arriveeY" type="number" />
-  </div>
-  <div>
-    <label>Camion ID:</label>
-    <input formControlName="camionId" type="number" />
-  </div>
-  <button type="submit">{{ selectedCourseId ? 'Mettre à jour' : 'Créer' }} la course</button>
-</form>
+  <!-- Formulaire ajout/modif -->
+  <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <label>Départ X :</label>
+      <input type="number" formControlName="departX" />
+    </div>
+    <div class="form-row">
+      <label>Départ Y :</label>
+      <input type="number" formControlName="departY" />
+    </div>
+    <div class="form-row">
+      <label>Arrivée X :</label>
+      <input type="number" formControlName="arriveeX" />
+    </div>
+    <div class="form-row">
+      <label>Arrivée Y :</label>
+      <input type="number" formControlName="arriveeY" />
+    </div>
+    <div class="form-row">
+      <label>ID Camion :</label>
+      <input type="number" formControlName="camionId" />
+    </div>
 
-<ul>
-  <li *ngFor="let course of courses">
-    Course ID: {{ course.id }} - Camion ID: {{ course.camionId }}
-    <button (click)="editCourse(course)">Modifier</button>
-    <button (click)="deleteCourse(course.id!)">Supprimer</button>
-  </li>
-</ul>
+    <button type="submit">{{ selectedCourseId ? 'Mettre à jour' : 'Créer' }}</button>
+    <button type="button" (click)="courseForm.reset(); selectedCourseId = null">Annuler</button>
+  </form>
+
+  <!-- Liste des courses -->
+  <div class="course-list">
+    <h3>Liste des Courses</h3>
+    <ul>
+      <li *ngFor="let course of courses">
+        <p>
+          <strong>ID :</strong> {{ course.id }} |
+          <strong>Départ :</strong> ({{ course.depart.x }}, {{ course.depart.y }}) |
+          <strong>Arrivée :</strong> ({{ course.arrivee.x }}, {{ course.arrivee.y }}) |
+          <strong>Camion :</strong> {{ course.camionId }}
+        </p>
+        <button (click)="editCourse(course)">Modifier</button>
+        <button (click)="deleteCourse(course.id!)">Supprimer</button>
+      </li>
+    </ul>
+  </div>
+</div>
